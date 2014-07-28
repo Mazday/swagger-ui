@@ -1,4 +1,9 @@
 class ParameterView extends Backbone.View
+
+  events: {
+    'click .add'         : 'addParameter'
+  }
+
   initialize: ->
     Handlebars.registerHelper 'isArray',
       (param, opts) ->
@@ -61,3 +66,15 @@ class ParameterView extends Backbone.View
           Handlebars.templates.param_required
         else
           Handlebars.templates.param
+
+  addParameter: (e) ->
+    parentTR = $(@el).closest('tr')
+    cloneTR = parentTR.clone()
+    $('.add', cloneTR).remove()
+    $('.parameter', cloneTR).val($('.parameter', @el).val());
+    $('.parameter', @el).val('')
+    $('.code', @el).html($('.code', cloneTR).html().replace(/.*\[([0-9]+)\]\.[\w\d]*$/g, (fullMatch, val, n) -> 
+      num = Number(n) + 1
+      val + '[' + num + ']'
+    ))
+    cloneTR.insertBefore(parentTR)
